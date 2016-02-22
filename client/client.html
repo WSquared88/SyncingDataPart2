@@ -4,16 +4,77 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         "use strict";
+    
+        var canvas;
+        var ctx;
+        var socket;
+		var squares = {};
+
+        var square = {
+            lastUpdate: new Date().getTime(),
+            x: Math.random()*400,
+            y: Math.random()*400,
+            height: 100,
+            width: 100
+        };
 		
-		var socket;
-		
-		function init()
+		function redraw()
 		{
-			socket = io.connect();
+			ctx.clearRect(0,0,canvas.width, canvas.height);
+			console.log("drawing squares " + squares.length);
+			var key = Object.keys(squares);
+			
+			for(var i = 0;i<key.length;i++)
+			{
+				ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
+			}
 		}
 		
-		window.onload = init;
-	</script>
+		function update(data)
+		{
+			square = data;
+			redraw();
+		}
+        
+        function init() {
+            canvas = document.querySelector("#canvas");
+            ctx = canvas.getContext("2d");
+			
+			socket = io.connect();
+			socket.on("connect", function()
+			{
+				var message = 
+				{
+					message: "",
+					time: square.lastUpdate,
+					data: square
+				};
+				socket.emit("init", message);
+			});
+			
+			socket.on("updateMovement", update);
+			
+			socket.on("allSquares", function(data)
+			{
+				console.log("data " + data.data);
+				squares = data.data;
+				redraw();
+			});
+        }
+
+    window.onload = init;
+	window.onunload = function()
+	{
+		console.log("unloading");
+		var message = 
+		{
+			message: "",
+			time: square.lastUpdate,
+			data: ""
+		};
+		socket.emit("leaving", message);
+	};
+    </script>
 </head>
 <body>
     <canvas id="canvas" height="500" width="500">Please use an HTML 5 browser</canvas>
