@@ -21,7 +21,6 @@
 		function redraw()
 		{
 			ctx.clearRect(0,0,canvas.width, canvas.height);
-			console.log("drawing squares " + squares.length);
 			var key = Object.keys(squares);
 			
 			for(var i = 0;i<key.length;i++)
@@ -52,20 +51,16 @@
 				socket.emit("init", message);
 			});
 			
-			socket.on("updateMovement", update);
-			
 			socket.on("allSquares", function(data)
 			{
-				console.log("data " + data.data);
 				squares = data.data;
 				redraw();
 			});
         }
 
     window.onload = init;
-	window.onunload = function()
+	window.onbeforeunload = function()
 	{
-		console.log("unloading");
 		var message = 
 		{
 			message: "",

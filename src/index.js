@@ -33,14 +33,21 @@ io.on("connection", function(socket)
 			message: "",
 			data: squares
 		};
-		console.log("throwing squares" + squares);
+		
 		io.sockets.in("room1").emit("allSquares", message);
 	});
 	
 	socket.on("leaving", function(data)
 	{
-		console.log("leaving");
 		delete squares[data.time];
+		
+		var message = 
+		{
+			message: "",
+			data: squares
+		};
+		
+		io.sockets.in("room1").emit("allSquares", message);
 	});
 	
 	socket.on("disconnect", function(data)
