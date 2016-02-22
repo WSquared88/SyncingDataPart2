@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        "use strict";
+		
+		var socket;
+		
+		function init()
+		{
+			socket = io.connect();
+		}
+		
+		window.onload = init;
+	</script>
+</head>
+<body>
+    <canvas id="canvas" height="500" width="500">Please use an HTML 5 browser</canvas>
+</body>
+</html>
